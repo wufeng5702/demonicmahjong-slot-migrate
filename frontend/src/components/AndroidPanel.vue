@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue'
 import QRCode from 'qrcode'
 
 const props = defineProps<{
-  dbPath: string
+  dbPaths: string[]
   busy: boolean
   status: string
   error: string
@@ -32,8 +32,12 @@ const emit = defineEmits<{
   (_e: 'wifi'): void
 }>()
 
-// Android device path (constant, shown for reference)
-const ANDROID_DB_PATH = '/sdcard/Android/data/com.itaotuo.wodima/files/game.db'
+// Android device paths (constants, shown for reference).
+// Standard install plus TapTap sandboxed install.
+const ANDROID_DB_PATHS = [
+  '/sdcard/Android/data/com.itaotuo.wodima/files/game.db',
+  '/sdcard/Android/data/com.taptap/files/tap_sandbox_sd/0/Android/data/com.itaotuo.wodima/files/game.db',
+]
 
 // QR code SVG generated from wifiUrl
 const qrSvg = ref('')
@@ -77,7 +81,13 @@ async function copyCmd(cmd?: string) {
       <!-- Android path reference -->
       <div class="row">
         <span class="label">手机端路径：</span>
-        <code class="path">{{ ANDROID_DB_PATH }}</code>
+        <div class="path-list">
+          <div v-for="(p, i) in ANDROID_DB_PATHS" :key="i" class="path-item">
+            <code class="path">{{ p }}</code>
+            <span v-if="i === 0" class="badge-tag">独立安装包</span>
+            <span v-else class="badge-tag alt">TapTap 启动</span>
+          </div>
+        </div>
       </div>
 
       <!-- Action buttons -->
@@ -110,10 +120,12 @@ async function copyCmd(cmd?: string) {
       </p>
       <p v-if="WIFI_ENABLED && props.wifiError" class="error">Wi-Fi 错误：{{ props.wifiError }}</p>
 
-      <!-- Selected local file path -->
-      <div v-if="props.dbPath" class="row">
+      <!-- Selected local file paths -->
+      <div v-if="props.dbPaths.length" class="row">
         <span class="label">已加载文件：</span>
-        <code class="path">{{ props.dbPath }}</code>
+        <div class="path-list">
+          <code v-for="(p, i) in props.dbPaths" :key="i" class="path">{{ p }}</code>
+        </div>
       </div>
 
       <!-- Wi-Fi transfer panel -->
@@ -364,5 +376,34 @@ async function copyCmd(cmd?: string) {
 }
 .btn-copy:hover {
   background: #106ebe;
+}
+
+/* Path list (multiple Android save paths / loaded files) */
+.path-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.path-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.path-item .path {
+  flex: 1;
+}
+.badge-tag {
+  flex-shrink: 0;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #0078d4;
+  color: white;
+  white-space: nowrap;
+}
+.badge-tag.alt {
+  background: #6c757d;
 }
 </style>

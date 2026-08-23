@@ -20,8 +20,14 @@ var adbFS embed.FS
 // It is used as a cache key: bumping it forces a re-extraction on existing installs.
 const ADBVersion = "34.0.5"
 
-// GameDBPath is the on-device path of the save database.
-const GameDBPath = "/sdcard/Android/data/com.itaotuo.wodima/files/game.db"
+// GameDBPaths lists the on-device candidate paths of the save database, ordered
+// by priority. The standard install path is tried first; TapTap's sandboxed
+// layout is tried as a fallback (TapTap wraps the game data dir under its own
+// package directory).
+var GameDBPaths = []string{
+	"/sdcard/Android/data/com.itaotuo.wodima/files/game.db",
+	"/sdcard/Android/data/com.taptap/files/tap_sandbox_sd/0/Android/data/com.itaotuo.wodima/files/game.db",
+}
 
 // Sentinel errors for structured UI handling.
 var (
@@ -98,14 +104,49 @@ func ListDevices(adbPath string) ([]Device, error) {
 	return devices, nil
 }
 
-// PullGameDB copies the save database from the given device into dstPath.
-// It classifies common adb pull failures into structured errors so the UI can
-// offer actionable guidance.
-func PullGameDB(adbPath, deviceSerial, dstPath string) error {
-	if err := os.MkdirAll(filepath.Dir(dstPath), 0o755); err != nil {
-		return err
+// PulledDB is one successfully pulled game.db file.
+type PulledDB struct {
+	SrcPath string `json:"sourcePath"` // on-device path it was pulled from
+	DstPath string `json:"path"`       // local destination path
+}
+
+// PullAllGameDBs pulls every existing game.db candidate from the device into
+// dstDir. Each candidate gets its own local file (game_0.db, game_1.db, ...).
+// Missing paths are skipped silently; other errors abort the operation.
+// Returns one entry per successful pull; if none succeeded returns an error.
+func PullAllGameDBs(adbPath, deviceSerial, dstDir string) ([]PulledDB, error) {
+	if err := os.MkdirAll(dstDir, 0o755); err != nil {
+		return nil, err
 	}
-	cmd := exec.Command(adbPath, "-s", deviceSerial, "pull", GameDBPath, dstPath)
+
+	var result []PulledDB
+	var lastErr error
+	for i, src := range GameDBPaths {
+		dst := filepath.Join(dstDir, fmt.Sprintf("game_%d.db", i))
+		err := pullOnce(adbPath, deviceSerial, src, dst)
+		if err == nil {
+			result = append(result, PulledDB{SrcPath: src, DstPath: dst})
+			continue
+		}
+		if errors.Is(err, ErrPathNotFound) {
+			lastErr = err
+			continue
+		}
+		// Unauthorized, no device, or real failure: abort.
+		return nil, err
+	}
+	if len(result) == 0 {
+		if lastErr == nil {
+			lastErr = ErrPathNotFound
+		}
+		return nil, lastErr
+	}
+	return result, nil
+}
+
+// pullOnce runs a single `adb pull` for the given source path.
+func pullOnce(adbPath, deviceSerial, srcPath, dstPath string) error {
+	cmd := exec.Command(adbPath, "-s", deviceSerial, "pull", srcPath, dstPath)
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	cmd.Stdout = nil

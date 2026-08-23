@@ -192,8 +192,8 @@ func (s *WifiServer) handleIndex(w http.ResponseWriter, r *http.Request) {
     .upload-area:active { transform: scale(0.98); }
     .upload-area p { color: #666; margin: 10px 0; }
     #file-input { display: none; }
-    .hint { background: #fff3cd; padding: 16px; border-radius: 8px; margin-top: 16px; font-size: 14px; color: #856404; }
-    .hint code { background: #e6e6e6; padding: 2px 6px; border-radius: 4px; }
+    .hint { background: #fff3cd; padding: 16px; border-radius: 8px; margin-top: 16px; font-size: 14px; color: #856404; word-break: break-word; }
+    .hint code { background: #e6e6e6; padding: 2px 6px; border-radius: 4px; display: inline-block; word-break: break-all; max-width: 100%; }
     .status { margin-top: 16px; padding: 12px; border-radius: 8px; text-align: center; display: none; }
     .status.success { background: #d4edda; color: #155724; display: block; }
     .status.error { background: #f8d7da; color: #721c24; display: block; }
@@ -208,7 +208,11 @@ func (s *WifiServer) handleIndex(w http.ResponseWriter, r *http.Request) {
   <div class="hint">
     <strong>📱 操作指引：</strong><br>
     1. 打开手机的「文件管理」App<br>
-    2. 进入路径：<code>Android/data/com.itaotuo.wodima/files/</code><br>
+    2. 进入路径（根据安装方式选择）：<br>
+    &nbsp;&nbsp;&nbsp;独立安装包：<br>
+    <code>Android/data/com.itaotuo.wodima/files/</code><br>
+    &nbsp;&nbsp;&nbsp;TapTap 启动：<br>
+    <code>Android/data/com.taptap/files/tap_sandbox_sd/0/Android/data/com.itaotuo.wodima/files/</code><br>
     3. 复制 <code>game.db</code> 到「Download」文件夹<br>
     4. 点击下方按钮选择文件
   </div>

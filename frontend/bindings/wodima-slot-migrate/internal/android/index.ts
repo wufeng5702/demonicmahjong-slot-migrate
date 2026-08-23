@@ -13,6 +13,7 @@ export type {
     CheckWifiUploadResponse,
     PickAndroidDBManuallyRequest,
     PickAndroidDBManuallyResponse,
+    PulledDB,
     ReadAndroidSlotsRequest,
     ReadAndroidSlotsResponse,
     SlotRow,

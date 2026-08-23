@@ -11,7 +11,8 @@ import * as $models from "./models.js";
 
 /**
  * AutoFetchAndroidDB extracts the bundled adb, locates a connected device and
- * pulls game.db into a per-user cache directory. Returns the local path.
+ * pulls every existing game.db candidate into a per-user cache directory.
+ * Returns the local path and the on-device source path for each pulled file.
  */
 export function AutoFetchAndroidDB(req: $models.AutoFetchAndroidDBRequest | null): $CancellablePromise<$models.AutoFetchAndroidDBResponse | null> {
     return $Call.ByID(454855022, req);
@@ -26,8 +27,10 @@ export function CheckWifiUpload(req: $models.CheckWifiUploadRequest | null): $Ca
 }
 
 /**
- * PickAndroidDBManually opens a file picker so the user can choose a game.db
- * file previously copied to the PC.
+ * PickAndroidDBManually opens a file picker allowing the user to choose one or
+ * more game.db files previously copied to the PC. Multiple selection is supported
+ * so users who have both a standard install and a TapTap install can pick both
+ * at once.
  */
 export function PickAndroidDBManually(req: $models.PickAndroidDBManuallyRequest | null): $CancellablePromise<$models.PickAndroidDBManuallyResponse | null> {
     return $Call.ByID(1081327591, req);

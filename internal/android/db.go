@@ -13,6 +13,9 @@ import (
 )
 
 // SlotRow mirrors one record of the `slot` table.
+// SourceDB is the local file path the row was read from, so the UI can
+// disambiguate rows coming from multiple game.db files (e.g. when the user
+// has both a standard install and a TapTap install).
 type SlotRow struct {
 	ID          int64  `json:"id"`
 	SlotIndex   int    `json:"slotIndex"`
@@ -20,6 +23,7 @@ type SlotRow struct {
 	JSONString  string `json:"jsonString"`
 	JSONSize    int    `json:"jsonSize"`
 	JSONPreview string `json:"jsonPreview"`
+	SourceDB    string `json:"sourceDb"`
 }
 
 // PreviewLimit is the maximum number of runes included in JSONPreview.
@@ -58,6 +62,7 @@ func ReadSlots(dbPath string) ([]SlotRow, error) {
 		}
 		r.JSONSize = len(r.JSONString)
 		r.JSONPreview = preview(r.JSONString)
+		r.SourceDB = dbPath
 		out = append(out, r)
 	}
 	return out, rows.Err()

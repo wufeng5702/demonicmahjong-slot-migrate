@@ -23,9 +23,9 @@ import type { SlotRow } from '../bindings/wodima-slot-migrate/internal/android'
 
 const steamInfo = ref<Info | null>(null)
 const selectedRemote = ref('')
-const dbPath = ref('')
+const dbPaths = ref<string[]>([])
 const slots = ref<SlotRow[]>([])
-const selectedIds = ref<number[]>([])
+const selectedKeys = ref<Set<string>>(new Set())
 const results = ref<Result[]>([])
 
 const busy = ref(false)
@@ -45,8 +45,20 @@ const wifiDebugInfo = ref('')
 const wifiFirewallCmd = ref('')
 
 const canMigrate = computed(
-  () => selectedRemote.value !== '' && dbPath.value !== '' && selectedIds.value.length > 0,
+  () => selectedRemote.value !== '' && dbPaths.value.length > 0 && selectedKeys.value.size > 0,
 )
+
+// Build a stable composite key for a slot row so rows from different game.db
+// files with the same SQLite rowid do not collide.
+function slotKey(r: SlotRow): string {
+  return r.sourceDb + '::' + r.id
+}
+
+// Map an on-device source path to a human-readable install type label.
+function sourceLabel(sourcePath: string): string {
+  if (sourcePath.includes('com.taptap')) return 'TapTap 启动'
+  return '独立安装包'
+}
 
 onMounted(() => {
   void detectSteam()
@@ -90,10 +102,12 @@ async function autoFetch() {
   androidStatus.value = '正在连接设备并拉取 game.db…'
   try {
     const resp = await AutoFetchAndroidDB({})
-    const path = resp?.path ?? ''
-    dbPath.value = path
-    androidStatus.value = '已获取存档文件。'
-    await readSlots(path)
+    const files = resp?.files ?? []
+    if (files.length) {
+      dbPaths.value = files.map((f) => f.path)
+      androidStatus.value = `已获取 ${files.length} 个存档文件。`
+      await readSlots(files)
+    }
   } catch (e: any) {
     androidError.value = String(e?.message ?? e)
     androidStatus.value = ''
@@ -109,10 +123,10 @@ async function pickAndroidDB() {
   androidStatus.value = ''
   try {
     const resp = await PickAndroidDBManually({})
-    const path = resp?.path ?? ''
-    if (path) {
-      dbPath.value = path
-      await readSlots(path)
+    const paths = resp?.paths ?? []
+    if (paths.length) {
+      dbPaths.value = paths
+      await readSlots(paths.map((p) => ({ path: p })))
     }
   } catch (e: any) {
     androidError.value = String(e?.message ?? e)
@@ -121,22 +135,39 @@ async function pickAndroidDB() {
   }
 }
 
-async function readSlots(path: string) {
+// readSlots reads slot rows from one or more game.db files. Each file may
+// carry a sourcePath so rows can be labeled with the install type
+// ("独立安装" / "TapTap 安装"). Without sourcePath the raw path is used.
+async function readSlots(files: { path: string; sourcePath?: string }[]) {
   slots.value = []
-  selectedIds.value = []
+  selectedKeys.value = new Set()
   results.value = []
-  const resp = await ReadAndroidSlots({ dbPath: path })
-  slots.value = resp?.rows ?? []
+
+  const allRows: SlotRow[] = []
+  for (const f of files) {
+    try {
+      const resp = await ReadAndroidSlots({ dbPath: f.path })
+      const rows = resp?.rows ?? []
+      if (f.sourcePath) {
+        for (const r of rows) r.sourceDb = sourceLabel(f.sourcePath)
+      }
+      allRows.push(...rows)
+    } catch (e: any) {
+      androidError.value = `读取 ${f.path} 失败：${String(e?.message ?? e)}`
+    }
+  }
+  slots.value = allRows
 }
 
-function toggleSlot(id: number) {
-  const i = selectedIds.value.indexOf(id)
-  if (i >= 0) selectedIds.value = selectedIds.value.filter((x) => x !== id)
-  else selectedIds.value = [...selectedIds.value, id]
+function toggleSlot(key: string) {
+  const next = new Set(selectedKeys.value)
+  if (next.has(key)) next.delete(key)
+  else next.add(key)
+  selectedKeys.value = next
 }
 
 function toggleAll(on: boolean) {
-  selectedIds.value = on ? slots.value.map((r: { id: any }) => r.id) : []
+  selectedKeys.value = on ? new Set(slots.value.map(slotKey)) : new Set()
 }
 
 async function doMigrate() {
@@ -144,8 +175,8 @@ async function doMigrate() {
   results.value = []
   try {
     const selections: SlotSelection[] = slots.value
-      .filter((r: { id: number }) => selectedIds.value.includes(r.id))
-      .map((r: { id: any; slotIndex: any; jsonString: any }) => ({
+      .filter((r) => selectedKeys.value.has(slotKey(r)))
+      .map((r) => ({
         id: r.id,
         slotIndex: r.slotIndex,
         jsonString: r.jsonString,
@@ -266,9 +297,9 @@ function pollWifiUpload(token: string) {
         wifiUrl.value = ''
         wifiLocalUrl.value = ''
         wifiStatus.value = ''
-        dbPath.value = path
+        dbPaths.value = [path]
         androidStatus.value = 'Wi-Fi 上传成功，已加载存档文件。'
-        await readSlots(path)
+        await readSlots([{ path }])
       }
     } catch {
       // Still waiting, ignore errors
@@ -307,7 +338,7 @@ function pollWifiUpload(token: string) {
         @select="(r: string) => (selectedRemote = r)"
       />
       <AndroidPanel
-        :db-path="dbPath"
+        :db-paths="dbPaths"
         :busy="busy"
         :status="androidStatus"
         :error="androidError"
@@ -326,7 +357,7 @@ function pollWifiUpload(token: string) {
       />
       <SlotTable
         :rows="slots"
-        :selected-ids="new Set(selectedIds)"
+        :selected-keys="selectedKeys"
         :busy="busy"
         @toggle="toggleSlot"
         @toggle-all="toggleAll"

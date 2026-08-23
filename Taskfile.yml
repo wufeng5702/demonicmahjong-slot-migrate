@@ -1,7 +1,7 @@
 version: '3'
 
 vars:
-  APP_NAME: "wodima-slot-migrate"
+  APP_NAME: "WodimaSlotMigrate"
 
   BIN_DIR: "bin"
 

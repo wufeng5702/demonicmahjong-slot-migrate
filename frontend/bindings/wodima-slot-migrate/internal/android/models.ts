@@ -9,9 +9,11 @@ export interface AutoFetchAndroidDBRequest {
 
 /**
  * AutoFetchAndroidDBResponse is the return envelope for AutoFetchAndroidDB.
+ * Files contains one entry per on-device save that was successfully pulled
+ * (e.g. both the standard install and the TapTap sandbox install).
  */
 export interface AutoFetchAndroidDBResponse {
-    "path": string;
+    "files": PulledDB[] | null;
 }
 
 /**
@@ -36,8 +38,24 @@ export interface PickAndroidDBManuallyRequest {
 
 /**
  * PickAndroidDBManuallyResponse is the return envelope for PickAndroidDBManually.
+ * Paths contains one or more user-selected game.db files.
  */
 export interface PickAndroidDBManuallyResponse {
+    "paths": string[] | null;
+}
+
+/**
+ * PulledDB is one successfully pulled game.db file.
+ */
+export interface PulledDB {
+    /**
+     * on-device path it was pulled from
+     */
+    "sourcePath": string;
+
+    /**
+     * local destination path
+     */
     "path": string;
 }
 
@@ -57,6 +75,9 @@ export interface ReadAndroidSlotsResponse {
 
 /**
  * SlotRow mirrors one record of the `slot` table.
+ * SourceDB is the local file path the row was read from, so the UI can
+ * disambiguate rows coming from multiple game.db files (e.g. when the user
+ * has both a standard install and a TapTap install).
  */
 export interface SlotRow {
     "id": number;
@@ -65,6 +86,7 @@ export interface SlotRow {
     "jsonString": string;
     "jsonSize": number;
     "jsonPreview": string;
+    "sourceDb": string;
 }
 
 /**

@@ -4,17 +4,22 @@ import type { SlotRow } from '../../bindings/wodima-slot-migrate/internal/androi
 
 const props = defineProps<{
   rows: SlotRow[]
-  selectedIds: Set<number>
+  selectedKeys: Set<string>
   busy: boolean
 }>()
 
 const emit = defineEmits<{
-  (_e: 'toggle', _id: number): void
+  (_e: 'toggle', _key: string): void
   (_e: 'toggleAll', _on: boolean): void
 }>()
 
+// Build a stable composite key matching App.vue's slotKey().
+function slotKey(r: SlotRow): string {
+  return r.sourceDb + '::' + r.id
+}
+
 const allSelected = computed(
-  () => props.rows.length > 0 && props.rows.every((r) => props.selectedIds.has(r.id)),
+  () => props.rows.length > 0 && props.rows.every((r) => props.selectedKeys.has(slotKey(r))),
 )
 
 function formatSize(n: number): string {
@@ -23,17 +28,38 @@ function formatSize(n: number): string {
   return (n / 1024 / 1024).toFixed(2) + ' MB'
 }
 
+// Extract a short label from the sourceDb value. For auto-fetched rows this
+// is already a label like "独立安装" or "TapTap 安装". For manually picked
+// files it's a full path, so we fall back to the filename.
+function shortDb(sourceDb: string): string {
+  if (!sourceDb) return ''
+  // If it doesn't look like a path (no / or \), it's already a label.
+  if (!sourceDb.includes('/') && !sourceDb.includes('\\')) return sourceDb
+  const parts = sourceDb.replace(/\\/g, '/').split('/')
+  return parts[parts.length - 1] || sourceDb
+}
+
 // Detect slotIndex collisions across selected rows so we can warn the user:
 // migrating two rows into the same Slot{X}.json would overwrite each other.
 const slotCollision = computed(() => {
-  const seen = new Map<number, number>()
+  const seen = new Map<number, string>()
   for (const r of props.rows) {
-    if (props.selectedIds.has(r.id)) {
+    if (props.selectedKeys.has(slotKey(r))) {
       if (seen.has(r.slotIndex)) return r.slotIndex
-      seen.set(r.slotIndex, r.id)
+      seen.set(r.slotIndex, slotKey(r))
     }
   }
   return -1
+})
+
+// Whether more than one distinct source db is present in the table.
+const hasMultipleSources = computed(() => {
+  const seen = new Set<string>()
+  for (const r of props.rows) {
+    seen.add(r.sourceDb)
+    if (seen.size > 1) return true
+  }
+  return false
 })
 </script>
 
@@ -62,18 +88,19 @@ const slotCollision = computed(() => {
             <th class="col-check" />
             <th class="col-slot">slotIndex</th>
             <th class="col-account">userAccount</th>
+            <th v-if="hasMultipleSources" class="col-source">来源</th>
             <th class="col-size">JSON 大小</th>
             <th class="col-preview">JSON 预览</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="r in props.rows" :key="r.id">
+          <tr v-for="r in props.rows" :key="slotKey(r)">
             <td class="col-check">
               <input
                 type="checkbox"
-                :checked="props.selectedIds.has(r.id)"
+                :checked="props.selectedKeys.has(slotKey(r))"
                 :disabled="props.busy"
-                @change="emit('toggle', r.id)"
+                @change="emit('toggle', slotKey(r))"
               />
             </td>
             <td class="col-slot">
@@ -81,6 +108,9 @@ const slotCollision = computed(() => {
             </td>
             <td class="col-account">
               {{ r.userAccount || '(空)' }}
+            </td>
+            <td v-if="hasMultipleSources" class="col-source" :title="r.sourceDb">
+              {{ shortDb(r.sourceDb) }}
             </td>
             <td class="col-size">
               {{ formatSize(r.jsonSize) }}
@@ -94,3 +124,14 @@ const slotCollision = computed(() => {
     </div>
   </section>
 </template>
+
+<style scoped>
+.col-source {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: #888;
+}
+</style>
