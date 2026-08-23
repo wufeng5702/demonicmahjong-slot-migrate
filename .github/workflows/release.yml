@@ -38,10 +38,9 @@ jobs:
         run: wails3 build
 
       - name: Release & Upload artifacts
+        if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
-          if: github.ref_type == 'tag'
           files: |
             bin/*.exe
-            bin/*.zip
