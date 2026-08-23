@@ -33,19 +33,27 @@
 ### 安装 Wails
 
 ```bash
-go install github.com/wailsapp/wails/v3/cmd/wails@latest
+go install github.com/wailsapp/wails/v3/cmd/wails3@latest
 ```
 
 ### 开发模式
 
 ```bash
-wails dev
+wails3 dev -config ./build/config.yml -port 9245
+```
+
+### 重新生成前端绑定
+
+修改 Go service 签名后需要重新生成（注意 `-ts` 参数生成 TypeScript）：
+
+```bash
+wails3 generate bindings -ts
 ```
 
 ### 构建
 
 ```bash
-wails build
+wails3 build -webview2 embed
 ```
 
 ## 项目结构
@@ -53,14 +61,14 @@ wails build
 ```
 .
 ├── frontend/          # Vue 3 + TypeScript 前端
+│   └── bindings/      # wails3 自动生成的 TS 绑定
 ├── internal/
 │   ├── android/       # 安卓存档获取（ADB / Wi-Fi / SQLite 解析）
 │   ├── migrate/       # 迁移核心逻辑
 │   └── steam/         # Steam 路径检测
-├── build/             # 构建资源（图标、安装包配置）
-├── app.go             # Wails 应用核心
+├── build/             # 构建资源（图标、NSIS 安装包配置、Taskfile）
 ├── main.go            # 入口
-└── wails.json         # Wails 配置
+└── Taskfile.yml       # 构建任务
 ```
 
 ## 许可证

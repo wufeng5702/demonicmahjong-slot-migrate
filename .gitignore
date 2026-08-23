@@ -38,3 +38,6 @@ game.db
 
 # wails task
 .task/checksum
+
+# wails3 generate syso (Windows resource file, rebuilt on demand)
+*.syso
