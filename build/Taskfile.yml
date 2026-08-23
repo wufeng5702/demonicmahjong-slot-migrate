@@ -17,6 +17,7 @@ tasks:
     # two `go mod tidy` processes racing on go.mod can corrupt it (#4637).
     run: once
     cmds:
+      - go get -u github.com/wailsapp/wails/v3 # wait for release version
       - go mod tidy
 
   install:frontend:deps:
