@@ -97,6 +97,7 @@ async function pickRemote() {
 
 async function autoFetch() {
   await clearWifiState()
+  clearLoadedFiles()
   busy.value = true
   androidError.value = ''
   androidStatus.value = '正在连接设备并拉取 game.db…'
@@ -118,6 +119,7 @@ async function autoFetch() {
 
 async function pickAndroidDB() {
   await clearWifiState()
+  clearLoadedFiles()
   busy.value = true
   androidError.value = ''
   androidStatus.value = ''
@@ -224,10 +226,21 @@ async function clearWifiState() {
   wifiError.value = ''
   wifiStatus.value = ''
   wifiDebugInfo.value = ''
+  wifiFirewallCmd.value = ''
+}
+
+// Clear loaded file paths and slot rows so stale data does not linger when
+// the user switches acquisition methods.
+function clearLoadedFiles() {
+  dbPaths.value = []
+  slots.value = []
+  selectedKeys.value = new Set()
+  results.value = []
+  androidStatus.value = ''
+  androidError.value = ''
 }
 
 async function toggleWifi() {
-  console.log('toggleWifi called, wifiActive:', wifiActive.value)
   if (wifiActive.value) {
     // Stop Wi-Fi server
     stopWifiPolling()
@@ -246,11 +259,11 @@ async function toggleWifi() {
     wifiFirewallCmd.value = ''
   } else {
     // Start Wi-Fi server
+    clearLoadedFiles()
     busy.value = true
     wifiError.value = ''
     wifiStatus.value = '正在启动 Wi-Fi 服务器…'
     try {
-      console.log('Calling StartWifiServer...')
       const resp = await StartWifiServer({})
       const result = resp?.result ?? null
       if (!result) {
@@ -259,7 +272,6 @@ async function toggleWifi() {
         return
       }
 
-      console.log('StartWifiServer result:', result)
       wifiUrl.value = result.url
       wifiLocalUrl.value = result.localUrl
       wifiAllUrls.value = result.allUrls || []
@@ -271,7 +283,6 @@ async function toggleWifi() {
       // Poll for upload completion
       pollWifiUpload(result.token)
     } catch (e: any) {
-      console.error('StartWifiServer failed:', e)
       wifiError.value = String(e?.message ?? e)
       wifiStatus.value = ''
     } finally {

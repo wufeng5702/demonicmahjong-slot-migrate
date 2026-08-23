@@ -97,7 +97,7 @@ async function copyCmd(cmd?: string) {
         <button
           v-if="WIFI_ENABLED"
           class="btn"
-          :disabled="props.busy || props.wifiActive"
+          :disabled="props.busy && !props.wifiActive"
           @click="emit('wifi')"
         >
           {{ props.wifiActive ? '停止 Wi-Fi 传输' : props.busy ? '启动中…' : '通过 Wi-Fi 获取' }}
