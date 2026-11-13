@@ -36,10 +36,10 @@ tasks:
     generates:
       - node_modules
     preconditions:
-      - sh: pnpm --version
+      - cmd: pnpm --version
         msg: "pnpm not found"
     cmds:
-      - pnpm install
+      - cmd: pnpm install
 
   build:frontend:
     label: build:frontend (DEV={{.DEV}} RUNNER={{.PACKAGE_MANAGER}})
@@ -60,7 +60,7 @@ tasks:
           OBFUSCATED:
             ref: .OBFUSCATED
     cmds:
-      - pnpm run build
+      - cmd: pnpm run build
 
   dev:frontend:
     summary: Runs the frontend in development mode
@@ -72,7 +72,7 @@ tasks:
   frontend:dev:pnpm:
     dir: frontend
     cmds:
-      - pnpm dev --port {{.VITE_PORT}} --strictPort
+      - cmd: pnpm dev --port {{.VITE_PORT}} --strictPort
 
   generate:bindings:
     summary: Generates bindings for the frontend
@@ -101,4 +101,4 @@ tasks:
     generates:
       - "windows/icon.ico"
     cmds:
-      - wails3 generate icons -input appicon.png -windowsfilename windows/icon.ico
+      - wails3 generate icons -input appicon.png -windowsfilename windows/icon.ico -macfilename ""

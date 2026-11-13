@@ -213,3 +213,5 @@ Wi-Fi 上传服务监听 `0.0.0.0:<随机端口>`。Windows 防火墙在「公�
 7. **golangci-lint 与 Go 工具链不匹配** — golangci-lint 必须能解析本机 Go 的标准库：老版本（v2.13，go1.26 构建）在 go1.27 下直接 panic。本机与 CI 均使用 v2.15。如升级本机 Go 大版本后 lint 异常，先升级 golangci-lint（`go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest`）。
 8. **`@wailsio/runtime` 版本漂移** — 前端依赖不要用 `latest` 标签，见「前端运行时依赖」。
 9. **productIdentifier / 名称不一致** — 改 `build/config.yml` 的产品元数据时，记得同步 `build/windows/` 下的图标、清单、NSIS / MSIX 元数据和版本号。
+10. **CI runner 里 `sh: pnpm --version` 报 "pnpm not found"** — `pnpm/setup` 只提供 `.cmd` / `.ps1` shim，go-task 内置 shell（mvdan/sh）不按 PATHEXT 解析，只能精确匹配文件名。Taskfile 里调用 pnpm（及其他 .cmd/.ps1 形式的 shim）一律用 `cmd:`（走系统 shell）。
+11. **`wails3 generate icons` 默认还会生成 mac 图标**（`-macfilename` 默认 `build/darwin/icon.icns`）— 仅 Windows 项目需显式 `-macfilename ""` 跳过，否则报 `open build/darwin/icon.icns: ...`。
