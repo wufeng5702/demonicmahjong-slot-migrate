@@ -54,7 +54,7 @@ func EnsureADB() (string, error) {
 	if base == "" {
 		base = os.TempDir()
 	}
-	dir := filepath.Join(base, "wodima-migrate", "adb-"+ADBVersion)
+	dir := filepath.Join(base, "demonicmahjong-migrate", "adb-"+ADBVersion)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return "", err
 	}

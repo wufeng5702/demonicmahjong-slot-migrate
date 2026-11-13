@@ -90,7 +90,7 @@ func cachedGameDBDir() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	dir := filepath.Join(base, "wodima-migrate")
+	dir := filepath.Join(base, "demonicmahjong-migrate")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return "", err
 	}

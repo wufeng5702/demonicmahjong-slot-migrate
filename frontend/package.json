@@ -25,7 +25,7 @@
     ]
   },
   "dependencies": {
-    "@wailsio/runtime": "latest",
+    "@wailsio/runtime": "^3.1.0",
     "qrcode": "^1.5.4",
     "vue": "^3.2.37"
   },

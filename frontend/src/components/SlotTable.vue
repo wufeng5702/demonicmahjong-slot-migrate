@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import type { SlotRow } from '../../bindings/wodima-slot-migrate/internal/android'
+import type { SlotRow } from '../../bindings/demonicmahjong-slot-migrate/internal/android'
 
 const props = defineProps<{
   rows: SlotRow[]

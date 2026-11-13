@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import type { Info } from '../../bindings/wodima-slot-migrate/internal/steam'
+import type { Info } from '../../bindings/demonicmahjong-slot-migrate/internal/steam'
 
 const props = defineProps<{
   info: Info | null
