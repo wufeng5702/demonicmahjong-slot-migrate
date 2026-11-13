@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <MsixPackagingToolTemplate
     xmlns="http://schemas.microsoft.com/msix/packaging/msixpackagingtool/template/2022">
     <Settings
@@ -8,46 +8,47 @@
         AllowPromptForPassword="false">
     </Settings>
     <Installer
-        Path="wodima-slot-migrate.exe"
+        Path="WodimaSlotMigrate.exe"
         Arguments=""
-        InstallLocation="C:\Program Files\My Company\My Product">
+        InstallLocation="C:\Program Files\wufeng5702\DemonicMahjong Slot Migrate">
     </Installer>
     <PackageInformation
-        PackageName="My Product"
-        PackageDisplayName="My Product"
-        PublisherName="CN=My Company"
-        PublisherDisplayName="My Company"
+        PackageName="DemonicMahjong Slot Migrate"
+        PackageDisplayName="DemonicMahjong Slot Migrate"
+        PublisherName="CN=wufeng5702"
+        PublisherDisplayName="wufeng5702"
         Version="0.1.0.0"
-        PackageDescription="A wodima-slot-migrate application">
+        PackageDescription="将安卓版《我在地府打麻将》的存档迁移到 Steam 版本">
         <Capabilities>
             <Capability Name="runFullTrust" />
-            
+
         </Capabilities>
         <Applications>
             <Application
-                Id="com.example.wails3tert"
-                Description="A wodima-slot-migrate application"
-                DisplayName="My Product"
-                ExecutableName="wodima-slot-migrate.exe"
+                Id="com.wufeng5702.demonicmahjong-slot-migrate"
+                Description="将安卓版《我在地府打麻将》的存档迁移到 Steam 版本"
+                DisplayName="DemonicMahjong Slot Migrate"
+                ExecutableName="WodimaSlotMigrate.exe"
                 EntryPoint="Windows.FullTrustApplication">
-                
+
             </Application>
         </Applications>
         <Resources>
             <Resource Language="en-us" />
+            <Resource Language="zh-cn" />
         </Resources>
         <Dependencies>
             <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
         </Dependencies>
         <Properties>
             <Framework>false</Framework>
-            <DisplayName>My Product</DisplayName>
-            <PublisherDisplayName>My Company</PublisherDisplayName>
-            <Description>A wodima-slot-migrate application</Description>
+            <DisplayName>DemonicMahjong Slot Migrate</DisplayName>
+            <PublisherDisplayName>wufeng5702</PublisherDisplayName>
+            <Description>将安卓版《我在地府打麻将》的存档迁移到 Steam 版本</Description>
             <Logo>Assets\AppIcon.png</Logo>
         </Properties>
     </PackageInformation>
-    <SaveLocation PackagePath="wodima-slot-migrate.msix" />
+    <SaveLocation PackagePath="WodimaSlotMigrate.msix" />
     <PackageIntegrity>
         <CertificatePath></CertificatePath>
     </PackageIntegrity>
