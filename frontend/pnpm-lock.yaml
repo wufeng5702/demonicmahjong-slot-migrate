@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@wailsio/runtime':
-        specifier: latest
-        version: 3.0.0-beta.10
+        specifier: ^3.1.0
+        version: 3.1.0
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -493,8 +493,8 @@ packages:
   '@vue/shared@3.5.41':
     resolution: {integrity: sha512-IOnwSCma8j+9xJT6b8H0dEYidC80NsYmNMlZxRsukYcSoGaDBohog5hDxzeUXdFeGWFA++vWvxqOmrr96VlqMA==}
 
-  '@wailsio/runtime@3.0.0-beta.10':
-    resolution: {integrity: sha512-dyUC652oUz8TnyaY//pAIR8MOGvzQpaVzipzTJPEQR9TeHDH6gH9T8kNwli0OIZ5SfrIWhv26f2wi9VB4N+ypw==}
+  '@wailsio/runtime@3.1.0':
+    resolution: {integrity: sha512-noEAedvRyO8TLCrqhGwzrp+mbMxAIDa2rYmdJQOzvJV9MxgaZeXAJGNBiMiKMTSSy4ESOtQi4VH/5heSzi6ZmA==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -1915,7 +1915,7 @@ snapshots:
 
   '@vue/shared@3.5.41': {}
 
-  '@wailsio/runtime@3.0.0-beta.10': {}
+  '@wailsio/runtime@3.1.0': {}
 
   acorn-jsx@5.3.2(acorn@8.18.0):
     dependencies:
@@ -2820,7 +2820,7 @@ snapshots:
     dependencies:
       ansi-styles: 4.0.0
       string-width: 4.2.0
-      strip-ansi: 6.0.1
+      strip-ansi: 6.0.0
 
   wrap-ansi@8.1.0:
     dependencies:

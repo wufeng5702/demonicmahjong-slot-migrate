@@ -113,7 +113,7 @@ func StartWifiServer(dstPath string) (*WifiResult, error) {
 	mu.Unlock()
 
 	firewallCmd := fmt.Sprintf(
-		"netsh advfirewall firewall add rule name=\"Wodima Wi-Fi Upload\" dir=in action=allow protocol=TCP localport=%d profile=any",
+		"netsh advfirewall firewall add rule name=\"DemonicMahjong Wi-Fi Upload\" dir=in action=allow protocol=TCP localport=%d profile=any",
 		port,
 	)
 

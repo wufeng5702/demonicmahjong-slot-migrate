@@ -13,7 +13,7 @@ import * as $models from "./models.js";
  * Detect is a convenience wrapper returning the full Info.
  */
 export function Detect(req: $models.DetectRequest | null): $CancellablePromise<$models.DetectResponse | null> {
-    return $Call.ByID(1893933918, req);
+    return $Call.ByID(801142526, req);
 }
 
 /**
@@ -21,5 +21,5 @@ export function Detect(req: $models.DetectRequest | null): $CancellablePromise<$
  * remote folder manually (e.g. when Steam is installed in a portable location).
  */
 export function PickRemoteManually(req: $models.PickRemoteManuallyRequest | null): $CancellablePromise<$models.PickRemoteManuallyResponse | null> {
-    return $Call.ByID(1997229051, req);
+    return $Call.ByID(1430192283, req);
 }

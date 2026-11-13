@@ -5,9 +5,9 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 
-	"wodima-slot-migrate/internal/android"
-	"wodima-slot-migrate/internal/migrate"
-	"wodima-slot-migrate/internal/steam"
+	"demonicmahjong-slot-migrate/internal/android"
+	"demonicmahjong-slot-migrate/internal/migrate"
+	"demonicmahjong-slot-migrate/internal/steam"
 )
 
 //go:embed all:frontend/dist
@@ -15,8 +15,8 @@ var assets embed.FS
 
 func main() {
 	app := application.New(application.Options{
-		Name:        "wodima-slot-migrate",
-		Description: "",
+		Name:        "demonicmahjong-slot-migrate",
+		Description: "将安卓版《我在地府打麻将》的存档迁移到 Steam 版本",
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
@@ -29,7 +29,7 @@ func main() {
 	app.RegisterService(application.NewService(steam.NewService(app)))
 
 	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:  "wodima-slot-migrate",
+		Title:  "我在地府打麻将 · 存档迁移",
 		Width:  1024,
 		Height: 768,
 	})

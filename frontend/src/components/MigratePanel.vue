@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import type { Result } from '../../bindings/wodima-slot-migrate/internal/migrate'
+import type { Result } from '../../bindings/demonicmahjong-slot-migrate/internal/migrate'
 
 const props = defineProps<{
   results: Result[]

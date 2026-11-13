@@ -15,7 +15,7 @@ import * as $models from "./models.js";
  * Returns the local path and the on-device source path for each pulled file.
  */
 export function AutoFetchAndroidDB(req: $models.AutoFetchAndroidDBRequest | null): $CancellablePromise<$models.AutoFetchAndroidDBResponse | null> {
-    return $Call.ByID(454855022, req);
+    return $Call.ByID(2951203854, req);
 }
 
 /**
@@ -23,7 +23,7 @@ export function AutoFetchAndroidDB(req: $models.AutoFetchAndroidDBRequest | null
  * Returns the local file path when upload is done, empty string otherwise.
  */
 export function CheckWifiUpload(req: $models.CheckWifiUploadRequest | null): $CancellablePromise<$models.CheckWifiUploadResponse | null> {
-    return $Call.ByID(3384413192, req);
+    return $Call.ByID(2583545384, req);
 }
 
 /**
@@ -33,14 +33,14 @@ export function CheckWifiUpload(req: $models.CheckWifiUploadRequest | null): $Ca
  * at once.
  */
 export function PickAndroidDBManually(req: $models.PickAndroidDBManuallyRequest | null): $CancellablePromise<$models.PickAndroidDBManuallyResponse | null> {
-    return $Call.ByID(1081327591, req);
+    return $Call.ByID(1772393607, req);
 }
 
 /**
  * ReadAndroidSlots reads all rows from the slot table of the given game.db.
  */
 export function ReadAndroidSlots(req: $models.ReadAndroidSlotsRequest | null): $CancellablePromise<$models.ReadAndroidSlotsResponse | null> {
-    return $Call.ByID(2947350792, req);
+    return $Call.ByID(488566696, req);
 }
 
 /**
@@ -48,12 +48,12 @@ export function ReadAndroidSlots(req: $models.ReadAndroidSlotsRequest | null): $
  * game.db via Wi-Fi upload from the user's phone.
  */
 export function StartWifiServer(req: $models.StartWifiServerRequest | null): $CancellablePromise<$models.StartWifiServerResponse | null> {
-    return $Call.ByID(4037194490, req);
+    return $Call.ByID(3810578330, req);
 }
 
 /**
  * StopWifiServer stops the currently running Wi-Fi server.
  */
 export function StopWifiServer(req: $models.StopWifiServerRequest | null): $CancellablePromise<$models.StopWifiServerResponse | null> {
-    return $Call.ByID(1877468678, req);
+    return $Call.ByID(798129062, req);
 }

@@ -13,13 +13,13 @@ import {
   ReadAndroidSlots,
   StartWifiServer,
   StopWifiServer,
-} from '../bindings/wodima-slot-migrate/internal/android/service'
-import { Detect, PickRemoteManually } from '../bindings/wodima-slot-migrate/internal/steam/service'
-import { Migrate } from '../bindings/wodima-slot-migrate/internal/migrate/service'
+} from '../bindings/demonicmahjong-slot-migrate/internal/android/service'
+import { Detect, PickRemoteManually } from '../bindings/demonicmahjong-slot-migrate/internal/steam/service'
+import { Migrate } from '../bindings/demonicmahjong-slot-migrate/internal/migrate/service'
 
-import type { Result, SlotSelection } from '../bindings/wodima-slot-migrate/internal/migrate'
-import type { Info } from '../bindings/wodima-slot-migrate/internal/steam'
-import type { SlotRow } from '../bindings/wodima-slot-migrate/internal/android'
+import type { Result, SlotSelection } from '../bindings/demonicmahjong-slot-migrate/internal/migrate'
+import type { Info } from '../bindings/demonicmahjong-slot-migrate/internal/steam'
+import type { SlotRow } from '../bindings/demonicmahjong-slot-migrate/internal/android'
 
 const steamInfo = ref<Info | null>(null)
 const selectedRemote = ref('')
